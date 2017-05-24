@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Home - Daniel7Byte</title>
+  <script src="assets/js/jquery-3.2.1.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.0.0/firebase.js"></script>
+</head>
+<body>
+
+  <h2>Content</h2>  
+  <pre id="content"></pre>
+
+  <div id="new">
+    <input id="fullName" type="text">
+    <button id="newUser">Agregar</button>
+  </div>
+
+  <h2>Friends</h2>
+  <ul id="friends"></ul>
+
+  <div id="delete">
+    <input id="fullKey" type="text">
+    <button id="deleteUser">Eliminar</button>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    const database = firebase.database();
+
+    const dbRef = database.ref().child('demo');
+    const dbRefFriends = dbRef.child('friends');
+    
+    dbRef.on('value', snap => {
+      const TextFormated = JSON.stringify(snap.val(), null, 2);
+      console.log("Items Updated: " + TextFormated);
+      $('#content').text( TextFormated );
+    });
+
+    dbRefFriends.on('child_added', snap => {
+      console.log("Item Added: " + snap.val());
+      const li = $('<li onclick="eliminar("'+snap.key+'")" id="'+snap.key+'">'+snap.val()+'</li>');
+      $('#friends').append(li);
+    });
+
+    dbRefFriends.on('child_changed', snap => {
+      console.log("Item Changed: " + snap.val());
+      const liChange = $('#' + snap.key);
+      liChange.text(snap.val());
+    });
+
+    dbRefFriends.on('child_removed', snap => {
+      console.log("Item Deleted: " + snap.val());
+      const liToRemove = $('#' + snap.key);
+      liToRemove.remove();
+    });
+
+    $('#newUser').click(e => {
+      const fullName = $('#fullName').val();
+      dbRefFriends.push(fullName);
+      
+      // dbRefFriends.push().set({
+      //   fullName: fullName
+      //   from: "Cali, Colombia"
+      // });
+
+    });
+
+    $('#deleteUser').click(e => {
+      const fullKey = $('#fullKey').val();
+      dbRefFriends.ref.child(fullKey).remove();
+    });
+
+    function eliminar(fullKey){
+      dbRefFriends.ref.child(fullKey).remove();
+    }
+
+    firebase.auth().onAuthStateChanged( firebaseUser => {
+      if(firebaseUser) {
+        console.log("👍");
+      } else {
+        console.log("👎");
+      }    
+    });
+  </script>
+</body>
+</html>
