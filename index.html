@@ -19,11 +19,6 @@
   <h2>Friends</h2>
   <ul id="friends"></ul>
 
-  <div id="delete">
-    <input id="fullKey" type="text">
-    <button id="deleteUser">Eliminar</button>
-  </div>
-
   <script src="assets/js/app.js"></script>
   <script>
     const database = firebase.database();
@@ -39,7 +34,7 @@
 
     dbRefFriends.on('child_added', snap => {
       console.log("Item Added: " + snap.val());
-      const li = $('<li onclick="eliminar('+"'"+snap.key+"'"+')" id="'+snap.key+'">'+snap.val()+'</li>');
+      const li = $('<li id="'+snap.key+'">'+snap.val()+'</li>').html(snap.val()+' <button onclick="eliminar('+"'"+snap.key+"'"+')">X</button>');
       $('#friends').append(li);
     });
 
