@@ -39,7 +39,7 @@
 
     dbRefFriends.on('child_added', snap => {
       console.log("Item Added: " + snap.val());
-      const li = $('<li onclick="eliminar("'+snap.key+'")" id="'+snap.key+'">'+snap.val()+'</li>');
+      const li = $('<li onclick="eliminar('+"'"+snap.key+"'"+')" id="'+snap.key+'">'+snap.val()+'</li>');
       $('#friends').append(li);
     });
 
@@ -58,12 +58,6 @@
     $('#newUser').click(e => {
       const fullName = $('#fullName').val();
       dbRefFriends.push(fullName);
-      
-      // dbRefFriends.push().set({
-      //   fullName: fullName
-      //   from: "Cali, Colombia"
-      // });
-
     });
 
     $('#deleteUser').click(e => {
